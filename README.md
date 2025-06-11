@@ -47,9 +47,16 @@ Enhance your C projects with a collection of powerful and reusable header files 
 
 ---
 
+## 🤝 Contributing
+
+Pull requests, feature suggestions, and bug reports are welcome!  
+Feel free to fork the repository, make improvements, and submit a pull request. Let's build something great together!
+
+---
+
 ## 📝 License
 
-This project is licensed under [MIT License]. Feel free to use, modify, and distribute.
+This project is licensed under [MIT License](LICENSE). Feel free to use, modify, and distribute.
 
 ---
 
