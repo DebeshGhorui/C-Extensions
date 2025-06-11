@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <ctype.h>
 
-void print(char printStatement[], char color[], bool mode)
-{
-    enum color
-    {
+void print(char printStatement[], char color[], bool mode) {
+    enum color {
         Red = 31,
         Green = 32,
         Yellow = 33,
@@ -16,16 +15,25 @@ void print(char printStatement[], char color[], bool mode)
         Gray = 90
     };
 
-    int colorCode = White; // default color code
+    int colorCode = White; // Default color code
 
-    // Check if color is provided; if not, use default color (White)
-    if (strcmp(color, "red") == 0 || strcmp(color, "Red") == 0 || strcmp(color, "RED") == 0) colorCode = Red;
-    else if (strcmp(color, "green") == 0 || strcmp(color, "Green") == 0 || strcmp(color, "GREEN") == 0) colorCode = Green;
-    else if (strcmp(color, "yellow") == 0 || strcmp(color, "Yellow") == 0 || strcmp(color, "YELLOW") == 0) colorCode = Yellow;
-    else if (strcmp(color, "blue") == 0 || strcmp(color, "Blue") == 0 || strcmp(color, "BLUE") == 0) colorCode = Blue;
-    else if (strcmp(color, "magenta") == 0 || strcmp(color, "Magenta") == 0 || strcmp(color, "MAGENTA") == 0) colorCode = Magenta;
-    else if (strcmp(color, "cyan") == 0 || strcmp(color, "Cyan") == 0 || strcmp(color, "CYAN") == 0) colorCode = Cyan;
-    else if (strcmp(color, "gray") == 0 || strcmp(color, "Gray") == 0 || strcmp(color, "GRAY") == 0) colorCode = Gray;
+    // Handle NULL or empty color input
+    if (color != NULL && strlen(color) > 0) {
+        // Convert color to lowercase for case-insensitive comparison
+        char lowerColor[20];
+        for (int i = 0; color[i] && i < sizeof(lowerColor) - 1; i++) {
+            lowerColor[i] = tolower(color[i]);
+            lowerColor[i + 1] = '\0';
+        }
+
+        if (strcmp(lowerColor, "red") == 0) colorCode = Red;
+        else if (strcmp(lowerColor, "green") == 0) colorCode = Green;
+        else if (strcmp(lowerColor, "yellow") == 0) colorCode = Yellow;
+        else if (strcmp(lowerColor, "blue") == 0) colorCode = Blue;
+        else if (strcmp(lowerColor, "magenta") == 0) colorCode = Magenta;
+        else if (strcmp(lowerColor, "cyan") == 0) colorCode = Cyan;
+        else if (strcmp(lowerColor, "gray") == 0) colorCode = Gray;
+    }
 
     // Print the statement with the specified or default color and mode
     if (mode) {
@@ -33,13 +41,12 @@ void print(char printStatement[], char color[], bool mode)
     } else {
         printf("\033[0;%dm%s\033[0m\n", colorCode, printStatement); // Normal mode
     }
-    
 }
 
-int main()
-{
-
-    print("Hello World!", "red", true);
+int main() {
+    print("Hello World!", NULL, false);         // Default usage (White, Normal mode)
+    print("This is green text.", "Green", false); // Custom usage (Green, Normal mode)
+    print("Yellow in bold!", "Yellow", true);     // Custom usage (Yellow, Bold mode)
 
     return 0;
 }
