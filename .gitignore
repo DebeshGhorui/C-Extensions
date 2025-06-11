@@ -1,4 +1,5 @@
 /.vscode/
 /.idea/
+**/output
 **/Test.c
 **/Test.md
