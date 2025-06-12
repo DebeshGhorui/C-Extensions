@@ -11,7 +11,18 @@ Enhance your C projects with a collection of powerful and reusable header files 
    `C:\MinGW\include`
 2. Copy the `.h` files from this repository into the directory.
 
-### Option 2: Use Individual Functions
+### Option 2: Project-Level Integration
+1. Create this folder structure:
+   ```
+   your-project/
+   ├── include/
+   │   └── headerfile.h
+   └── main.c
+   ```
+2. Copy the `.h` files into your project's `include` directory.
+
+
+### Option 3: Use Individual Functions
 1. Open the `.c` files provided in this repository.
 2. Copy the desired functions directly into your project code.
 
