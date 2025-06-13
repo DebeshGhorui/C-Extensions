@@ -1,10 +1,11 @@
-#ifndef TEXTPRINT_H
-#define TEXTPRINT_H
+#ifndef STYLEDPRINT_H
+#define STYLEDPRINT_H
 
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdarg.h>
 
 // Define text color codes
 enum TextColor {
@@ -43,7 +44,18 @@ enum TextStyle {
     TS_HIDDEN = 8
 };
 
-int getTextColorCode(const char* color) {
+// Function declarations (made static inline for header-only usage)
+static int getTextColorCode(const char* color);
+static int getBackgroundColorCode(const char* color);
+static int getTextStyleCode(const char* style);
+static void printStyled(const char* text, const char* textColor, const char* bgColor, const char* style, ...);
+static void printSuccess(const char* text, ...);
+static void printWarning(const char* text, ...);
+static void printError(const char* text, ...);
+
+// Function implementations
+
+static int getTextColorCode(const char* color) {
     if (!color) return TC_WHITE;
     
     char lowerColor[20] = {0};
@@ -59,11 +71,12 @@ int getTextColorCode(const char* color) {
     if (strcmp(lowerColor, "blue") == 0) return TC_BLUE;
     if (strcmp(lowerColor, "magenta") == 0) return TC_MAGENTA;
     if (strcmp(lowerColor, "cyan") == 0) return TC_CYAN;
+    if (strcmp(lowerColor, "white") == 0) return TC_WHITE;  // Added explicit white case
     if (strcmp(lowerColor, "gray") == 0) return TC_GRAY;
     return TC_WHITE;
 }
 
-int getBackgroundColorCode(const char* color) {
+static int getBackgroundColorCode(const char* color) {
     if (!color) return -1;  // No background color
     
     char lowerColor[20] = {0};
@@ -83,7 +96,7 @@ int getBackgroundColorCode(const char* color) {
     return -1;
 }
 
-int getTextStyleCode(const char* style) {
+static int getTextStyleCode(const char* style) {
     if (!style) return TS_RESET;
     
     char lowerStyle[20] = {0};
@@ -102,7 +115,7 @@ int getTextStyleCode(const char* style) {
     return TS_RESET;
 }
 
-void printuf(const char* text, const char* textColor, const char* bgColor, const char* style) {
+static void printStyled(const char* text, const char* textColor, const char* bgColor, const char* style, ...) {
     if (!text || strlen(text) == 0) {
         printf("\033[0;31m[Error: No text provided]\033[0m\n");
         return;
@@ -112,11 +125,69 @@ void printuf(const char* text, const char* textColor, const char* bgColor, const
     int bgColorCode = getBackgroundColorCode(bgColor);
     int styleCode = getTextStyleCode(style);
 
+    // Set up formatting
     if (bgColorCode != -1) {
-        printf("\033[%d;%d;%dm%s\033[0m\n", styleCode, colorCode, bgColorCode, text);
+        printf("\033[%d;%d;%dm", styleCode, colorCode, bgColorCode);
     } else {
-        printf("\033[%d;%dm%s\033[0m\n", styleCode, colorCode, text);
+        printf("\033[%d;%dm", styleCode, colorCode);
     }
+    
+    // Handle variable arguments like printf
+    va_list args;
+    va_start(args, style);
+    vprintf(text, args);
+    va_end(args);
+    
+    // Reset formatting and add newline
+    printf("\033[0m\n");
 }
 
-#endif // TEXTPRINT_H
+static void printSuccess(const char* text, ...) {
+    if (!text || strlen(text) == 0) {
+        printf("\033[0;31m[Error: No text provided]\033[0m\n");
+        return;
+    }
+
+    printf("\033[32m");  // Green color
+    
+    va_list args;
+    va_start(args, text);
+    vprintf(text, args);
+    va_end(args);
+    
+    printf("\033[0m\n");
+}
+
+static void printWarning(const char* text, ...) {
+    if (!text || strlen(text) == 0) {
+        printf("\033[0;31m[Error: No text provided]\033[0m\n");
+        return;
+    }
+
+    printf("\033[33m");  // Yellow color
+    
+    va_list args;
+    va_start(args, text);
+    vprintf(text, args);
+    va_end(args);
+    
+    printf("\033[0m\n");
+}
+
+static void printError(const char* text, ...) {
+    if (!text || strlen(text) == 0) {
+        printf("\033[0;31m[Error: No text provided]\033[0m\n");
+        return;
+    }
+
+    printf("\033[31m");  // Red color
+    
+    va_list args;
+    va_start(args, text);
+    vprintf(text, args);
+    va_end(args);
+    
+    printf("\033[0m\n");
+}
+
+#endif // STYLEDPRINT_H
